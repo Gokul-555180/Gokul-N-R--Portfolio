@@ -1,0 +1,14 @@
+# Dependencies and generated Next.js output
+node_modules/
+.next/
+out/
+dist/
+
+# Local environment and tooling files
+.env*
+!.env.example
+*.tsbuildinfo
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
