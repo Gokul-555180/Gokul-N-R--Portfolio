@@ -1,4 +1,4 @@
-export type ProjectStatus = 'MVP in progress' | 'Prototype'
+export type ProjectArtwork = 'invoice' | 'portal' | 'lab'
 
 export type Project = {
   slug: string
@@ -6,154 +6,151 @@ export type Project = {
   name: string
   shortName: string
   category: string
-  status: ProjectStatus
   year: string
   description: string
   problem: string
-  solution: string
+  approach: string
   contribution: string
   stack: string[]
   highlights: string[]
-  source?: string
-  accent: 'violet' | 'blue' | 'peach'
-  artwork: 'ledger' | 'moderation' | 'route'
+  limitations: string
+  source: string
+  demo?: string
+  artwork: ProjectArtwork
 }
 
 export const site = {
   name: 'Gokul N. R.',
-  shortName: 'Gokul',
-  role: 'Computer Science Engineering student',
-  school: 'Vidya Academy of Science and Technology, Kerala',
+  role: 'Computer Science and Engineering student',
+  school: 'Vidya Academy of Science and Technology',
   email: 'gokulnenmini212@gmail.com',
   github: 'https://github.com/Gokul-555180',
+  linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? 'https://www.linkedin.com/in/gokulnr0212/',
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://example.com',
 }
 
-// This file is the portfolio CMS. Only publish claims that have a source in a project,
-// résumé, certificate, or other record you are ready to stand behind.
 export const projects: Project[] = [
   {
-    slug: 'gstguard',
+    slug: 'gst-invoice-reconciliation',
     number: '01',
-    name: 'GSTGuard',
+    name: 'GST Invoice Reconciliation',
     shortName: 'GSTGuard',
     category: 'Document intelligence',
-    status: 'Prototype',
     year: '2026',
-    description: 'An AI-assisted GST invoice-reconciliation and case-management platform built around deterministic checks and human review.',
-    problem: 'Accounts teams must reconcile purchase orders and GST invoices while catching tax, quantity, price, and GSTIN discrepancies without losing an audit trail.',
-    solution: 'GSTGuard combines PDF/OCR ingestion, structured extraction, deterministic reconciliation, compliance retrieval, and an evidence-led human-review workflow.',
-    contribution: 'Built the product as a full-stack document-intelligence workflow, with a Next.js frontend, Django REST services, deterministic Python tools, and governed AI assistance.',
-    stack: ['Next.js', 'Django', 'Python', 'Tesseract OCR', 'LangGraph', 'FAISS'],
+    description: 'An AI-assisted workflow for reconciling purchase orders and GST invoices while keeping validation and final decisions accountable.',
+    problem: 'Accounts teams need to compare purchase orders and GST invoices without losing visibility into GSTIN, quantity, tax-rate, and total discrepancies.',
+    approach: 'The application ingests a PO and invoice, extracts structured data from PDFs or OCR, runs deterministic comparisons, retrieves relevant GST guidance, and presents evidence to a reviewer.',
+    contribution: 'Built the full-stack reconciliation flow: a Next.js review interface, Django REST services, Python validation tools, document processing, and an evidence-led case workflow.',
+    stack: ['Next.js', 'React', 'TypeScript', 'Django REST Framework', 'Python', 'MySQL', 'Redis', 'Celery', 'Gemini', 'LangGraph', 'FAISS', 'Tesseract OCR'],
     highlights: [
-      'Separates generative document understanding from deterministic tax calculations and validation.',
-      'Routes final approval, rejection, or clarification decisions to a human reviewer.',
-      'Records evidence, discrepancy flags, and case progress in an auditable workflow.',
+      'Uses pypdf first and Tesseract OCR as a fallback for scanned documents.',
+      'Keeps GSTIN, line-item, tax, quantity, and amount checks in deterministic Python tools.',
+      'Places final approve, reject, and clarification decisions behind an authenticated human-review step.',
     ],
+    limitations: 'The repository includes an evaluation framework, but its official labeled benchmark dataset is still required; this portfolio does not make accuracy or production-adoption claims.',
     source: 'https://github.com/Gokul-555180/gst-invoice-reconciliation',
-    accent: 'violet',
-    artwork: 'ledger',
+    demo: 'https://gst-reconciliation-ten.vercel.app',
+    artwork: 'invoice',
   },
   {
-    slug: 'mulearn-vast-moderation',
+    slug: 'samadhan-grievance-portal',
     number: '02',
-    name: 'µLearn VAST Moderator',
-    shortName: 'VAST Moderator',
-    category: 'Event moderation',
-    status: 'Prototype',
+    name: 'Samadhan Grievance Portal',
+    shortName: 'SAMADHAN',
+    category: 'Public transport workflow',
     year: '2026',
-    description: 'A real-time moderation, scoring, and analytics suite for µLearn VAST hackathons, bootcamps, and technical showcases.',
-    problem: 'Moderators need one dependable place to award mission XP, apply consistent judging criteria, follow leaderboard changes, and close an event with useful reports.',
-    solution: 'The panel combines live event spaces, multi-stage mission scoring, a five-pillar rubric, activity logs, leaderboard sync, and PDF export.',
-    contribution: 'Built the React and TypeScript moderation experience, including responsive event operations, scoring flows, visual feedback, and resilient data states.',
-    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Firebase', 'Framer Motion', 'jsPDF'],
+    description: 'A prototype for making public-transport complaints easier to file, route to a depot, and follow through a clear status journey.',
+    problem: 'Passengers need a straightforward way to report transport issues and understand where a complaint goes after it has been submitted.',
+    approach: 'The React application separates a passenger-facing reporting and tracking flow from protected depot operations, with web, voice, and WhatsApp-oriented intake paths represented in the interface.',
+    contribution: 'Contributed to the product interface for multilingual complaint intake, tracking, reference numbers, depot-facing review screens, escalation views, and related responsive states.',
+    stack: ['React', 'TypeScript', 'Vite', 'React Router', 'Framer Motion', 'Lucide React'],
     highlights: [
-      'Keeps a live activity trail for score changes, event locks, and export actions.',
-      'Supports Firebase Firestore real-time sync with a browser-local demo fallback.',
-      'Generates leaderboard and event-retrospective PDF reports from the client.',
+      'Includes routes for filing, reviewing, tracking, and viewing a public complaint dashboard.',
+      'Provides a separate protected depot area for complaints, escalations, and notifications.',
+      'Models passenger intake through web and voice screens, alongside a WhatsApp-oriented reporting path in the product design.',
     ],
-    accent: 'blue',
-    source: 'https://github.com/Gokul-555180/MuLearn-VAST-Moderation',
-    artwork: 'moderation',
+    limitations: 'The repository is a frontend prototype with mock-oriented service layers and no published deployment link, so it is not presented as an authority-operated service.',
+    source: 'https://github.com/Gokul-555180/Aanavandi-hackathon',
+    artwork: 'portal',
   },
   {
-    slug: 'samadhan',
+    slug: 'virtual-science-lab',
     number: '03',
-    name: 'Samadhan',
-    shortName: 'Samadhan',
-    category: 'Civic workflow',
-    status: 'Prototype',
+    name: 'Virtual Science Lab',
+    shortName: 'LabSphere',
+    category: 'Interactive education',
     year: '2026',
-    description: 'A transport-grievance workflow concept that turns a passenger report into a structured case people can follow.',
-    problem: 'Public transport complaints can be hard to structure, route to the responsible group, and track once they are submitted.',
-    solution: 'Samadhan offers a guided reporting flow, route-aware case information, tracking views, and administrator-facing review surfaces.',
-    contribution: 'Contributed to the product interface for report creation, routing, case tracking, and administrative review states.',
-    stack: ['React', 'TypeScript', 'Vite', 'REST APIs', 'Supabase'],
+    description: 'A browser-based CBSE virtual laboratory that turns practical-science concepts into guided, interactive learning experiences.',
+    problem: 'Students benefit from a safe, repeatable way to practise laboratory concepts, observe readings, and record work outside a physical lab.',
+    approach: 'LabSphere presents a React learning interface with experiment browsing, observation tables, quizzes, printable reports, and focused simulations for electricity, titration, microscopy, and program tracing.',
+    contribution: 'Built and composed the React and TypeScript experience, including the simulation interfaces, progress-oriented views, observation systems, and accessible learning controls.',
+    stack: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Framer Motion', 'Canvas Confetti', 'Lucide React'],
     highlights: [
-      'Covers report categories including routes, vehicles, staff, and service issues.',
-      'Has public tracking and administrative case-review interfaces.',
-      'Presented as a prototype workflow, not as a government production deployment.',
+      "Implements an Ohm's Law circuit with adjustable readings and a V–I graph.",
+      'Implements acid-base titration controls with pH feedback, recorded observations, and a curve view.',
+      'Also includes biology microscope and computer-science tracing interfaces, plus observation and quiz surfaces.',
     ],
-    source: 'https://github.com/Gokul-555180/Aanavandi-hackathon',
-    accent: 'peach',
-    artwork: 'route',
+    limitations: 'The repository lists fuller platform ideas such as authentication, teacher workflows, and 3D apparatus as roadmap work; these are not represented here as complete features.',
+    source: 'https://github.com/Gokul-555180/LabSphere---Virtual-Science-Lab',
+    demo: 'https://labspherevirtuallab.vercel.app',
+    artwork: 'lab',
   },
 ]
 
 export const skillGroups = [
   {
-    id: 'interface',
-    label: 'Interface kit',
-    code: 'INV-01',
-    summary: 'Turning practical flows into clear, responsive interfaces.',
-    items: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Tailwind CSS'],
+    title: 'Frontend',
+    detail: 'Used to make project workflows clear, responsive, and approachable—from navigation through interactive learning controls.',
+    items: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'Tailwind CSS', 'Framer Motion'],
+    evidence: { label: 'Virtual Science Lab', slug: 'virtual-science-lab' },
   },
   {
-    id: 'systems',
-    label: 'Systems shelf',
-    code: 'INV-02',
-    summary: 'The supporting pieces behind a dependable web experience.',
-    items: ['Node.js', 'Express', 'REST APIs', 'Google Sheets API', 'MongoDB', 'SQL'],
+    title: 'Backend & data',
+    detail: 'Used to support document processing, validation, and the data flows behind practical application interfaces.',
+    items: ['Python', 'Django', 'Django REST Framework', 'Node.js', 'Express', 'REST APIs', 'MySQL', 'MongoDB', 'Redis', 'SQL', 'Google Sheets API'],
+    evidence: { label: 'GST Invoice Reconciliation', slug: 'gst-invoice-reconciliation' },
   },
   {
-    id: 'applied',
-    label: 'Applied lab',
-    code: 'INV-03',
-    summary: 'Exploring assistive technologies where trust and feedback matter.',
-    items: ['Python', 'AI / LLM integration', 'OCR', 'Tesseract', 'ZXing'],
+    title: 'AI integration',
+    detail: 'Applied to document-intelligence work where context, deterministic checks, and human review each have a clear role.',
+    items: ['Gemini', 'LangGraph', 'FAISS', 'Pydantic', 'Tesseract OCR', 'RAG workflows'],
+    evidence: { label: 'GST Invoice Reconciliation', slug: 'gst-invoice-reconciliation' },
   },
   {
-    id: 'workbench',
-    label: 'Workbench',
-    code: 'INV-04',
-    summary: 'Tools I use to ship, iterate, and keep the work legible.',
-    items: ['Git', 'GitHub', 'Figma', 'Vite', 'C', 'C++', 'Java'],
+    title: 'Tools & learning',
+    detail: 'Tools used or actively explored in public work.',
+    items: ['Git', 'GitHub', 'Figma', 'Vite', 'Docker', 'C', 'C++', 'Java'],
+    evidence: { label: 'Samadhan Grievance Portal', slug: 'samadhan-grievance-portal' },
   },
 ] as const
 
 export const journey = [
   {
+    marker: '2025',
+    title: 'Started publishing project work',
+    detail: 'Began sharing small web and learning projects publicly on GitHub, making iteration part of the learning process.',
+  },
+  {
+    marker: '2026',
+    title: 'Document intelligence in practice',
+    detail: 'Developed GSTGuard as a human-governed workflow that combines extraction, deterministic validation, RAG, and case review.',
+  },
+  {
+    marker: '2026',
+    title: 'Education and civic product exploration',
+    detail: 'Built interface prototypes around interactive science learning and clearer public-transport grievance workflows.',
+  },
+  {
+    marker: 'CURRENT',
+    title: 'CSE studies and student community',
+    detail: 'Studying Computer Science and Engineering at VAST while contributing to technical work connected with the VAST µLearn community.',
+  },
+  {
     marker: 'NOW',
-    title: 'Building useful systems',
-    detail: 'Developing product ideas that connect software, AI assistance, and thoughtful interface design.',
+    title: 'Learning by building',
+    detail: 'Continuing to connect useful software, AI-assisted workflows, and thoughtful interface design through hands-on project work.',
   },
-  {
-    marker: 'B.TECH',
-    title: 'Computer Science & Engineering',
-    detail: 'Studying Computer Science and Engineering at Vidya Academy of Science and Technology, Kerala.',
-  },
-  {
-    marker: 'LOG',
-    title: 'Learning by shipping',
-    detail: 'Using project work to explore access to information, event operations, civic workflows, and polished product interactions.',
-  },
-]
-
-export const currentDesk = {
-  building: 'GSTGuard — a human-governed document-intelligence workflow for GST invoice reconciliation.',
-  learning: 'How deterministic rules, document intelligence, and useful human-in-the-loop controls can work together.',
-  note: 'Update this status directly in data/portfolio.ts when your focus changes.',
-}
+] as const
 
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug)

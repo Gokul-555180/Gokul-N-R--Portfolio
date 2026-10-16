@@ -1,252 +1,143 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Box,
-  ChevronRight,
-  Code2,
-  Compass,
-  GitFork,
-  Mail,
-  Menu,
-  MousePointer2,
-  RotateCcw,
-  X,
-} from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowDownRight, ArrowUpRight, GitFork, Mail, Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { currentDesk, journey, projects, site, skillGroups } from '@/data/portfolio'
+import { journey, projects, site, skillGroups } from '@/data/portfolio'
+import { DoodleArrow, DoodleCircle, DoodleConnection, DoodleRectangle, DoodleSpark, DoodleUnderline } from '@/components/editorial-doodles'
+import { GitHubActivitySection } from '@/components/github-activity-section'
 import { ProjectArt } from '@/components/project-art'
-import { BlockBlaster } from '@/components/block-blaster'
 
-const WorldScene = dynamic(() => import('@/components/world-scene'), {
-  ssr: false,
-  loading: () => <div className="grid h-full place-items-center bg-[radial-gradient(circle_at_55%_52%,#393c64_0%,#171a2b_68%)] text-6xl text-[var(--lavender)]">⌂</div>,
-})
-
-const MiniScene = dynamic(() => import('@/components/mini-scene'), {
-  ssr: false,
-  loading: () => <div className="mini-scene__loading">○</div>,
-})
-
-const sections = [
-  ['world', 'World'],
+const navigation = [
+  ['home', 'Home'],
   ['about', 'About'],
   ['projects', 'Projects'],
   ['skills', 'Skills'],
   ['journey', 'Journey'],
+  ['github', 'GitHub'],
   ['contact', 'Contact'],
 ] as const
 
-function scrollTo(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) {
+  const reduced = useReducedMotion()
+  return <motion.div className={className} initial={false} whileInView={reduced ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>
 }
 
-function BootSequence({ onComplete }: { onComplete: () => void }) {
-  const shouldReduce = useReducedMotion()
-  const [stage, setStage] = useState(0)
-
-  useEffect(() => {
-    if (shouldReduce) { onComplete(); return }
-    const steps = [
-      window.setTimeout(() => setStage(1), 260),
-      window.setTimeout(() => setStage(2), 700),
-      window.setTimeout(onComplete, 1450),
-    ]
-    return () => steps.forEach(window.clearTimeout)
-  }, [onComplete, shouldReduce])
-
-  return <motion.div className="boot-screen" initial={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: .28 } }}>
-    <button className="boot-skip" onClick={onComplete}>Skip intro <ArrowUpRight size={14} /></button>
-    <div className="boot-console" aria-live="polite">
-      <p className="boot-eyebrow">SYSTEM / PORTFOLIO_OS</p>
-      <p className="boot-title">GOKUL.EXE</p>
-      <div className="boot-lines">
-        <p>INITIALIZING CREATIVE MODE... <span>✓</span></p>
-        {stage >= 1 && <p>LOADING PROJECT ARCHIVE... <span>✓</span></p>}
-        {stage >= 2 && <p className="text-[var(--peach)]">WELCOME TO MY WORLD.</p>}
-      </div>
-    </div>
-  </motion.div>
-}
-
-function Header({ quickView, setQuickView }: { quickView: boolean, setQuickView: (value: boolean) => void }) {
+function Navigation() {
   const [open, setOpen] = useState(false)
-  const navigate = (id: string) => { scrollTo(id); setOpen(false) }
-
-  return <header className="site-header">
-    <button className="brand" onClick={() => navigate('world')} aria-label="Return to the beginning">GOKUL<span>.EXE</span></button>
+  const [active, setActive] = useState('home')
+  useEffect(() => {
+    const sections = navigation.map(([id]) => document.getElementById(id)).filter((section): section is HTMLElement => Boolean(section))
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+      if (visible) setActive(visible.target.id)
+    }, { rootMargin: '-24% 0px -62% 0px', threshold: [0.08, 0.28, 0.55] })
+    sections.forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
+  }, [])
+  return <header className="editorial-nav">
+    <a className="wordmark" href="#home">GOKUL N. R.<i /></a>
     <nav className="desktop-nav" aria-label="Primary navigation">
-      {sections.map(([id, label]) => <button key={id} onClick={() => navigate(id)}>{label}</button>)}
+      {navigation.map(([id, label], index) => <a key={id} href={`#${id}`} className={active === id ? 'is-active' : undefined} aria-current={active === id ? 'page' : undefined}><small>{String(index + 1).padStart(2, '0')}.</small> {label}</a>)}
     </nav>
-    <div className="header-actions">
-      <button className="view-switch" onClick={() => setQuickView(!quickView)} aria-pressed={quickView}>
-        <span className={quickView ? 'bg-[var(--sky)]' : ''} /> {quickView ? 'Explore' : 'Quick view'}
-      </button>
-      <button className="mobile-menu" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation">
-        {open ? <X size={20} /> : <Menu size={21} />}<span className="sr-only">Toggle navigation</span>
-      </button>
-    </div>
-    <AnimatePresence>{open && <motion.nav id="mobile-navigation" className="mobile-navigation" initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -14 }} aria-label="Mobile navigation">
-      {sections.map(([id, label]) => <button key={id} onClick={() => navigate(id)}>{label}<ArrowDownRight size={17} /></button>)}
-    </motion.nav>}</AnimatePresence>
+    <span className="nav-note">CSE STUDENT <ArrowDownRight size={16} /></span>
+    <button className="menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation"><span className="menu-button__label">Menu</span>{open ? <X size={18} /> : <Menu size={19} />}</button>
+    {open && <nav id="mobile-navigation" className="mobile-nav" aria-label="Mobile navigation">
+      {navigation.map(([id, label]) => <a key={id} href={`#${id}`} onClick={() => setOpen(false)} aria-current={active === id ? 'page' : undefined}>{label}<ArrowDownRight size={17} /></a>)}
+    </nav>}
   </header>
 }
 
-function Hero({ quickView }: { quickView: boolean }) {
-  const shouldReduce = useReducedMotion()
-  const [resetKey, setResetKey] = useState(0)
-  const selectStation = (id: 'projects' | 'about' | 'contact') => scrollTo(id)
-
-  return <section id="world" className={`hero-section ${quickView ? 'hero-section--quick' : ''}`} aria-labelledby="hero-heading">
-    <div className="hero-stage" aria-hidden="true">
-      <WorldScene onStationSelect={selectStation} resetKey={resetKey} />
-    </div>
-    <div className="hero-shade" aria-hidden="true" />
-    <div className="site-container hero-layout">
-      <motion.div className="hero-copy" initial={shouldReduce ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, delay: .18 }}>
-        <p className="eyebrow"><span className="live-dot" /> OPEN TO THE NEXT QUEST</p>
-        <h1 id="hero-heading">Hey, I&apos;m <em>Gokul.</em></h1>
-        <p className="hero-lede">I build thoughtful digital experiences at the intersection of software, AI and design.</p>
-        <p className="hero-caption">Computer Science Engineering <i /> Developer <i /> UI/UX Enthusiast</p>
-        <div className="hero-cta">
-          <button className="primary-button" onClick={() => scrollTo('about')}>Explore my world <ArrowDownRight size={18} /></button>
-          <button className="secondary-button" onClick={() => scrollTo('projects')}>View my projects <ChevronRight size={18} /></button>
-        </div>
+function Hero() {
+  const reduced = useReducedMotion()
+  return <section id="home" className="hero-panel panel" aria-labelledby="hero-heading">
+    <Navigation />
+    <div className="hero-grid">
+      <motion.div className="hero-copy" initial={false} animate={reduced ? undefined : { y: 0 }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}>
+        <p className="eyebrow hero-index">01 / HELLO</p>
+        <h1 id="hero-heading"><span>Hey, I&apos;m</span><strong>Gokul.</strong></h1>
+        <div className="hero-introduction"><p className="hero-mantra">BUILD<br />LEARN<br />IMPROVE<br />REPEAT</p><div><p className="hero-lede">Hey, I&apos;m Gokul. I build useful software, explore AI, and turn real-world problems into practical digital experiences.</p><div className="hero-actions"><a className="button button--ink" href="#projects">View projects <ArrowDownRight size={17} /></a><a className="button button--paper" href="#contact">Get in touch <ArrowDownRight size={17} /></a></div></div></div>
+        <div className="hero-facts"><span>{site.role}</span><i /><span>{site.school}</span></div>
       </motion.div>
-      <div className="hero-controls">
-        {!quickView && <div className="scene-hint"><MousePointer2 size={14} /><span>DRAG TO EXPLORE · SELECT A BEACON</span></div>}
-        <button className="reset-scene" onClick={() => setResetKey((key) => key + 1)}><RotateCcw size={14} /> Reset view</button>
-      </div>
+      <motion.figure className="hero-scene hero-scene--static" initial={false} animate={reduced ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}>
+        <img className="hero-workstation" src="/images/gokul-retro-workstation.webp" width="1280" height="853" alt="A retro developer workstation with a CRT monitor, keyboard, books, notebook, mouse, and desk tools." />
+        <figcaption className="scene-caption">SOFTWARE / AI / INTERFACES</figcaption>
+      </motion.figure>
+      <aside className="hero-side-note"><span>DEVELOPER<br />AI EXPLORER<br />PROBLEM SOLVER<br />CSE @ VAST</span></aside>
+      <div className="hero-wedge" aria-hidden="true" />
     </div>
-    <button className="hero-contact" onClick={() => scrollTo('contact')}>Get in touch <ArrowDownRight size={16} /></button>
   </section>
 }
 
-function Reveal({ children, className = '' }: { children: React.ReactNode, className?: string }) {
-  const shouldReduce = useReducedMotion()
-  return <motion.div className={className} initial={shouldReduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .58, ease: [0.22, 1, 0.36, 1] }}>
-    {children}
-  </motion.div>
+function SectionHeading({ number, title, children }: { number: string, title: React.ReactNode, children?: React.ReactNode }) {
+  return <div className="section-heading"><div><p className="eyebrow">{number}</p><h2>{title}</h2></div>{children && <div className="section-heading__copy">{children}</div>}</div>
 }
 
-function AboutSection() {
-  return <section id="about" className="section section-light about-section" aria-labelledby="about-heading">
-    <div className="site-container two-col">
-      <Reveal><p className="section-kicker">01 / PLAYER PROFILE</p><h2 id="about-heading">A curious builder<br />with a practical streak.</h2></Reveal>
-      <Reveal className="about-copy">
-        <p className="about-lede">I&apos;m {site.name}, a {site.role} at {site.school}. I like making complex, everyday tasks feel calmer, clearer, and more approachable.</p>
-        <p>I&apos;m interested in useful software, AI-assisted experiences, polished interfaces, and the small design decisions that help a product make sense from the first click.</p>
-        <a className="inline-link" href={site.github} target="_blank" rel="noreferrer">Visit my GitHub <ArrowUpRight size={16} /></a>
-      </Reveal>
-    </div>
-    <Reveal className="site-container profile-layout">
-      <article className="profile-card">
-        <div className="profile-card__top"><span className="pixel-text">PROFILE UNLOCKED</span><span>LVL 01</span></div>
-        <div className="profile-card__stamp"><Box size={30} strokeWidth={1.5} /></div>
-        <h3>Gokul N. R.</h3>
-        <p>{site.role}<br />{site.school}</p>
-        <div className="profile-tags"><span>Useful software</span><span>AI experiences</span><span>Interface design</span><span>Problem-solving</span></div>
-        <div className="profile-card__bottom"><span>STATUS: BUILDING</span><span>KERALA, INDIA</span></div>
-      </article>
-    </Reveal>
-  </section>
-}
-
-function ProjectSection() {
-  return <section id="projects" className="section projects-section" aria-labelledby="projects-heading">
-    <div className="site-container project-heading">
-      <Reveal><p className="section-kicker">02 / LEVEL SELECT</p><h2 id="projects-heading">Choose your<br /><em>next level.</em></h2></Reveal>
-      <Reveal><p>Selected project records with their real scope left intact. Open a case file for the problem, solution, contribution, and technical notes.</p></Reveal>
-    </div>
-    <div className="site-container project-grid">
-      {projects.map((project, index) => <Reveal key={project.slug} className="project-card-wrap">
-        <article className="project-card" style={{ transitionDelay: `${index * 60}ms` }}>
+function WorkSection() {
+  return <section id="projects" className="panel work-panel" aria-labelledby="work-heading">
+    <Reveal><SectionHeading number="02 / SELECTED WORK" title={<><em>Selected</em><br />work.</>}><p>A collection of projects built to solve real problems, explore ideas, and put technology to practical use.</p></SectionHeading></Reveal>
+    <div className="section-kicker"><p>Three project case studies, each documented from the actual repository.</p><DoodleUnderline /></div>
+    <div className="project-grid">
+      {projects.map((project, index) => <Reveal key={project.slug} delay={index * 0.07}>
+        <article className="editorial-project">
           <ProjectArt project={project} />
-          <div className="project-card__body">
-            <div className="project-card__meta"><span>{project.category}</span><span>{project.status}</span></div>
-            <h3>{project.name}</h3>
-            <p>{project.description}</p>
-            <div className="tech-row">{project.stack.slice(0, 3).map((item) => <span key={item}>{item}</span>)}</div>
-            <Link className="project-link" href={`/projects/${project.slug}`}>Open case file <ArrowUpRight size={17} /></Link>
-          </div>
+          <div className="editorial-project__body"><div className="project-meta"><span>{project.number} / {project.category}</span><span>{project.year}</span></div><h3>{project.name}</h3><p>{project.description}</p><div className="project-actions"><Link href={`/projects/${project.slug}`} className="text-link">Case study <ArrowUpRight size={16} /></Link><a href={project.source} className="text-link" target="_blank" rel="noreferrer">Repository <GitFork size={15} /></a></div></div>
         </article>
       </Reveal>)}
     </div>
-    <div className="site-container archive-note"><Code2 size={17} /><p>More experiments are in the workshop. The main archive only shows work I can describe responsibly today.</p></div>
+    <div className="work-closing"><DoodleCircle /><p>Three problems. Three approaches to useful software.</p></div>
+  </section>
+}
+
+function AboutSection() {
+  return <section id="about" className="panel about-panel" aria-labelledby="about-heading">
+    <Reveal><SectionHeading number="03 / ABOUT" title={<><em>About</em><br />the work.</>} /></Reveal>
+    <div className="about-grid">
+      <Reveal className="about-copy"><p className="lead-copy">I&apos;m Gokul N. R., a Computer Science and Engineering student at Vidya Academy of Science and Technology.</p><p>I enjoy taking practical problems beyond the idea stage—connecting reliable systems, AI integration, and thoughtful interfaces so the result is easier for people to understand and use.</p><ol className="about-principles"><li><span>01</span><p><b>Useful by default.</b> Build around a real need, not just a feature list.</p></li><li><span>02</span><p><b>Thoughtful by design.</b> Make complex workflows clearer to navigate and review.</p></li><li><span>03</span><p><b>Always iterating.</b> Learn through implementation, feedback, and refinement.</p></li></ol><div className="about-actions"><a className="text-link" href={site.github} target="_blank" rel="noreferrer">Visit GitHub <ArrowUpRight size={17} /></a></div></Reveal>
+      <Reveal className="about-composition"><div className="about-arch" /><div className="about-orbit" /><div className="about-rules"><i /><i /><i /></div><div className="about-paper"><span>THE PRACTICE</span><b>Useful<br />software,<br /><em>carefully</em><br />made.</b><small>VAST / CSE</small></div><div className="about-note">DESIGN<br />+<br />ENGINEERING</div><div className="about-map" aria-hidden="true"><span>DOCUMENTS</span><span>SYSTEMS</span><span>EXPERIENCES</span></div><p className="about-caption">SOFTWARE, AI &amp; INTERFACES<br />WITH INTENT.</p><DoodleConnection className="about-connection" /><DoodleRectangle className="about-rectangle" /><DoodleSpark className="about-doodle" /></Reveal>
+    </div>
   </section>
 }
 
 function SkillsSection() {
   const [active, setActive] = useState(0)
+  const reduced = useReducedMotion()
   const selected = skillGroups[active]
-  return <section id="skills" className="section skills-section" aria-labelledby="skills-heading">
-    <div className="site-container two-col skills-heading">
-      <Reveal><p className="section-kicker">03 / INVENTORY</p><h2 id="skills-heading">Things I&apos;ve put<br />in the <em>toolbelt.</em></h2></Reveal>
-      <Reveal><p>Technology here means used, studied, or actively explored. No arbitrary percentage bars—just a practical map of the tools behind the work.</p></Reveal>
-    </div>
-    <Reveal className="site-container inventory-shell">
-      <div className="inventory-tabs" role="tablist" aria-label="Skill inventory categories">
-        {skillGroups.map((group, index) => <button role="tab" aria-selected={index === active} key={group.id} onClick={() => setActive(index)}><span>{group.code}</span><strong>{group.label}</strong><ChevronRight size={17} /></button>)}
-      </div>
-      <div className="inventory-panel" role="tabpanel">
-        <p className="pixel-text">{selected.code} / {selected.label}</p>
-        <p className="inventory-summary">{selected.summary}</p>
-        <div className="skill-cards">{selected.items.map((item, index) => <motion.span key={item} initial={{ opacity: 0, scale: .92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * .045 }}>{item}</motion.span>)}</div>
-        <p className="inventory-hint">Choose a shelf to browse the collection.</p>
-      </div>
-    </Reveal>
+  const selectSkill = (next: number) => {
+    const index = (next + skillGroups.length) % skillGroups.length
+    setActive(index)
+    document.getElementById(`skill-tab-${index}`)?.focus()
+  }
+  return <section id="skills" className="panel skills-panel" aria-labelledby="skills-heading">
+    <Reveal><SectionHeading number="04 / SKILLS" title={<><em>Skills</em> &<br />tools.</>}><p>Technologies documented in public project work or actively explored. No rating bars—just useful context.</p></SectionHeading></Reveal>
+    <div className="skills-explorer"><div className="skills-tabs" role="tablist" aria-label="Technology categories">{skillGroups.map((group, index) => <button id={`skill-tab-${index}`} key={group.title} role="tab" aria-selected={active === index} aria-controls="skills-panel-content" tabIndex={active === index ? 0 : -1} onClick={() => setActive(index)} onKeyDown={(event) => { if (event.key === 'ArrowDown' || event.key === 'ArrowRight') { event.preventDefault(); selectSkill(index + 1) } if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') { event.preventDefault(); selectSkill(index - 1) } }}><span>0{index + 1}</span>{group.title}<ArrowDownRight size={15} /></button>)}</div><motion.div id="skills-panel-content" key={selected.title} className="skills-panel-content" role="tabpanel" aria-labelledby={`skill-tab-${active}`} initial={false} animate={reduced ? undefined : { opacity: 1, y: 0 }} transition={{ duration: .25 }}><div className="skills-copy"><p className="eyebrow">0{active + 1} / {selected.title}</p><h3>{selected.title}</h3><p>{selected.detail}</p><div className="skill-pills">{selected.items.map((item) => <span key={item}>{item}</span>)}</div><Link className="skills-evidence" href={`/projects/${selected.evidence.slug}`}>Seen in {selected.evidence.label} <ArrowUpRight size={15} /></Link></div><SkillSchematic /></motion.div></div>
   </section>
+}
+
+function SkillSchematic() {
+  return <div className="skills-schematic" aria-hidden="true"><span>HOW I THINK ABOUT THE WORK</span><svg viewBox="0 0 330 105" fill="none"><path d="M45 53h104M181 53h104M148 53l11-9m-11 9 11 9m126 0 11-9m-11 9 11 9" /><circle cx="45" cy="53" r="8" /><circle cx="165" cy="53" r="8" /><circle cx="285" cy="53" r="8" /></svg><div><b>INTERFACE</b><b>APPLICATION LOGIC</b><b>DATA</b></div></div>
 }
 
 function JourneySection() {
-  return <section id="journey" className="section journey-section" aria-labelledby="journey-heading">
-    <div className="site-container"><Reveal><p className="section-kicker">04 / QUEST LOG</p><h2 id="journey-heading">The route so far.</h2></Reveal>
-      <div className="quest-list">{journey.map((entry, index) => <Reveal key={entry.title}><article className="quest-entry"><span className="quest-number">{String(index + 1).padStart(2, '0')}</span><span className="quest-marker">{entry.marker}</span><div><h3>{entry.title}</h3><p>{entry.detail}</p></div></article></Reveal>)}</div>
-    </div>
-  </section>
-}
-
-function DeskSection() {
-  return <section className="section desk-section" aria-labelledby="desk-heading">
-    <div className="site-container desk-layout"><Reveal><p className="section-kicker">05 / SAVE POINT</p><h2 id="desk-heading">Currently at<br />the <em>desk.</em></h2></Reveal>
-      <Reveal><article className="terminal-card"><div className="terminal-card__bar"><span /><span /><span /><p>gokul@workstation: ~/now</p></div><div className="terminal-card__body"><p><i>$</i> currently-building</p><strong>{currentDesk.building}</strong><p><i>$</i> currently-learning</p><strong>{currentDesk.learning}</strong><small>// {currentDesk.note}</small></div></article></Reveal>
+  return <section id="journey" className="panel journey-panel" aria-labelledby="journey-heading">
+    <Reveal><SectionHeading number="05 / JOURNEY" title={<><em>In</em><br />progress.</>}><p>A few grounded milestones from the ongoing route—kept factual, concise, and open-ended.</p></SectionHeading></Reveal>
+    <div className="journey-intro"><p>A compact log of studies, community, and project work.</p><span>ONGOING / OPEN TO WHAT&apos;S NEXT</span></div>
+    <div id="journey-log" className="journey-list">
+      <DoodleConnection className="journey-connector" />
+      {journey.map((entry, index) => <Reveal key={entry.title} delay={index * 0.08}><article className="journey-entry"><span>{entry.marker}</span><div><h3>{entry.title}</h3><p>{entry.detail}</p></div><b>{String(index + 1).padStart(2, '0')}</b></article></Reveal>)}
     </div>
   </section>
 }
 
 function ContactSection() {
-  return <section id="contact" className="section contact-section" aria-labelledby="contact-heading">
-    <div className="site-container contact-layout"><Reveal><p className="section-kicker">06 / FINAL LEVEL</p><h2 id="contact-heading">Every good adventure<br />starts <em>somewhere.</em></h2><p className="contact-copy">Have an interesting idea, a project to build, or an opportunity to discuss? Let&apos;s talk.</p></Reveal>
-      <Reveal><div className="contact-console"><div className="mini-scene mini-scene--portal" aria-hidden="true"><MiniScene variant="portal" /></div><a href={`mailto:${site.email}`}><Mail size={19} /><span>{site.email}</span><ArrowUpRight size={17} /></a><a href={site.github} target="_blank" rel="noreferrer"><GitFork size={19} /><span>GitHub / Gokul-555180</span><ArrowUpRight size={17} /></a><p className="pixel-text">CONNECTION READY</p></div></Reveal>
-    </div>
+  return <section id="contact" className="panel contact-panel" aria-labelledby="contact-heading">
+    <Reveal><SectionHeading number="07 / CONTACT" title={<><em>Let&apos;s</em><br />talk.</>} /></Reveal>
+    <div className="contact-grid"><Reveal className="contact-invitation"><p className="contact-copy">Have a software project, collaboration, or opportunity in mind? I&apos;d be glad to hear about it.</p><p className="contact-note">CURRENT FOCUS / USEFUL SOFTWARE, AI-ASSISTED WORKFLOWS &amp; THOUGHTFUL INTERFACES</p><DoodleArrow className="contact-doodle" /></Reveal><Reveal className={`contact-links${site.linkedin ? '' : ' contact-links--two'}`}><a href={`mailto:${site.email}`}><Mail size={18} /><span>Email</span><ArrowUpRight size={16} /></a><a href={site.github} target="_blank" rel="noreferrer"><GitFork size={18} /><span>GitHub</span><ArrowUpRight size={16} /></a>{site.linkedin && <a href={site.linkedin} target="_blank" rel="noreferrer"><span aria-hidden="true">in</span><span>LinkedIn</span><ArrowUpRight size={16} /></a>}</Reveal></div>
+    <footer className="footer"><span>© {new Date().getFullYear()} {site.name}</span><span>Built with a focus on useful things.</span></footer>
   </section>
 }
 
 export function PortfolioShell() {
-  const [intro, setIntro] = useState(false)
-  const [quickView, setQuickView] = useState(false)
-
-  useEffect(() => setIntro(!sessionStorage.getItem('gokul-exe-visited')), [])
-  const endIntro = () => { sessionStorage.setItem('gokul-exe-visited', 'true'); setIntro(false) }
-
-  return <>
-    <a className="skip-link" href="#main-content">Skip to content</a>
-    <AnimatePresence>{intro && <BootSequence onComplete={endIntro} />}</AnimatePresence>
-    <Header quickView={quickView} setQuickView={setQuickView} />
-    <main id="main-content">
-      <Hero quickView={quickView} />
-      <BlockBlaster />
-      <AboutSection />
-      <ProjectSection />
-      <SkillsSection />
-      <JourneySection />
-      <DeskSection />
-      <ContactSection />
-    </main>
-    <footer className="site-footer"><div className="site-container"><span>© {new Date().getFullYear()} {site.name}</span><button onClick={() => { sessionStorage.removeItem('gokul-exe-visited'); scrollTo('world') }}><Compass size={14} /> Reboot world</button><span>Made with curiosity</span></div></footer>
-  </>
+  return <div className="portfolio-page"><span className="margin-letter margin-letter--one" aria-hidden="true">G</span><span className="margin-letter margin-letter--two" aria-hidden="true">R</span><span className="margin-slab" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><main id="main-content" className="portfolio-column"><Hero /><WorkSection /><AboutSection /><SkillsSection /><JourneySection /><GitHubActivitySection /><ContactSection /></main></div>
 }
