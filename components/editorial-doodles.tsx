@@ -45,3 +45,22 @@ export function DoodleConnection({ className = '' }: DoodleProps) {
     <circle cx="145" cy="106" r="4" />
   </svg>
 }
+
+export function DoodleBeagle({ className = '' }: DoodleProps) {
+  return <svg className={`beagle-doodle ${className}`} viewBox="0 0 420 300" aria-hidden="true">
+    <path d="M50 229c31-16 70-22 119-18 37 3 73 17 112 14 41-3 66-22 90-8 22 13 17 47-12 54H91c-31 0-59-13-60-42 0-12 7-23 19-28Z" fill="#f5ebdd" stroke="#171717" strokeWidth="3" strokeLinejoin="round" />
+    <path d="M216 134c30-35 92-32 120-4 18 18 23 56 4 76-20 21-55 15-78 10l-46-13c-30-9-32-45 0-69Z" fill="#f5ebdd" stroke="#171717" strokeWidth="3" strokeLinejoin="round" />
+    <path d="M265 142c-14-26-6-57 19-67 24-10 55 7 53 31-1 22-23 36-45 46Z" fill="#171717" stroke="#171717" strokeWidth="3" strokeLinejoin="round" />
+    <path d="M248 179c17 5 42 7 58 1" fill="none" stroke="#171717" strokeWidth="3" strokeLinecap="round" />
+    <circle cx="279" cy="155" r="4" fill="#171717" />
+    <circle cx="329" cy="176" r="6" fill="#171717" />
+    <path d="M229 205c25 9 55 14 85 10" fill="none" stroke="#1454a4" strokeWidth="8" strokeLinecap="round" />
+    <circle cx="267" cy="213" r="7" fill="#d7b56e" stroke="#171717" strokeWidth="2" />
+    <path d="M104 204c24-27 64-27 91 0l-15 38H88l16-38Z" fill="#1454a4" stroke="#171717" strokeWidth="3" strokeLinejoin="round" />
+    <path d="M85 241h111" stroke="#171717" strokeWidth="3" strokeLinecap="round" />
+    <path d="M127 184c5-19 17-32 36-40M146 180c8-16 20-26 36-31" fill="none" stroke="#d7b56e" strokeWidth="3" strokeLinecap="round" />
+    <path d="M65 270h297" stroke="#171717" strokeWidth="3" strokeLinecap="round" />
+    <path d="M71 279h164M258 279h93" stroke="#1454a4" strokeWidth="3" strokeLinecap="round" opacity=".72" />
+    <path d="M361 67c8-10 17-10 23 0M376 45c8-10 17-10 23 0" fill="none" stroke="#1454a4" strokeWidth="3" strokeLinecap="round" />
+  </svg>
+}

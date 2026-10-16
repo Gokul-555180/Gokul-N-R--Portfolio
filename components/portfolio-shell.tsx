@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, GitFork, Mail, Menu, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { journey, projects, site, skillGroups } from '@/data/portfolio'
-import { DoodleArrow, DoodleCircle, DoodleConnection, DoodleRectangle, DoodleSpark, DoodleUnderline } from '@/components/editorial-doodles'
+import { DoodleArrow, DoodleBeagle, DoodleCircle, DoodleConnection, DoodleRectangle, DoodleSpark, DoodleUnderline } from '@/components/editorial-doodles'
 import { GitHubActivitySection } from '@/components/github-activity-section'
 import { ProjectArt } from '@/components/project-art'
 
@@ -50,6 +50,24 @@ function Navigation() {
       </motion.nav>}
     </AnimatePresence>
   </header>
+}
+
+function WelcomeOverlay({ onDismiss }: { onDismiss: () => void }) {
+  const reduced = useReducedMotion()
+
+  useEffect(() => {
+    const timer = window.setTimeout(onDismiss, reduced ? 450 : 2600)
+    return () => window.clearTimeout(timer)
+  }, [onDismiss, reduced])
+
+  return <motion.div className="welcome-overlay" initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={reduced ? undefined : { opacity: 0, scale: 1.015 }} transition={{ duration: reduced ? .01 : .38, ease: [0.22, 1, 0.36, 1] }} role="dialog" aria-modal="true" aria-labelledby="welcome-heading">
+    <motion.div className="welcome-card" initial={reduced ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={reduced ? undefined : { opacity: 0, y: -10 }} transition={{ duration: reduced ? .01 : .48, delay: reduced ? 0 : .08, ease: [0.22, 1, 0.36, 1] }}>
+      <header className="welcome-card__nav"><span>GOKUL N. R.</span><span>PORTFOLIO / 2026</span></header>
+      <div className="welcome-copy"><p className="eyebrow">A LITTLE MOMENT BEFORE WE BEGIN</p><h1 id="welcome-heading"><em>Useful</em> things,<br />made with care.</h1><p>Software, AI, and thoughtful interfaces for real-world problems.</p><button className="welcome-enter" onClick={onDismiss}>Enter portfolio <ArrowDownRight size={17} /></button></div>
+      <div className="welcome-illustration"><span className="welcome-annotation">A QUIET<br />WORKBENCH<br />MOMENT</span><DoodleBeagle /><span className="welcome-stamp">01<br />HELLO</span></div>
+      <div className="welcome-progress" aria-hidden="true"><i /></div>
+    </motion.div>
+  </motion.div>
 }
 
 function Hero() {
@@ -142,5 +160,8 @@ function ContactSection() {
 }
 
 export function PortfolioShell() {
-  return <div className="portfolio-page"><span className="margin-letter margin-letter--one" aria-hidden="true">G</span><span className="margin-letter margin-letter--two" aria-hidden="true">R</span><span className="margin-slab" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><main id="main-content" className="portfolio-column"><Hero /><WorkSection /><AboutSection /><SkillsSection /><JourneySection /><GitHubActivitySection /><ContactSection /></main></div>
+  const [welcomeVisible, setWelcomeVisible] = useState(true)
+  const dismissWelcome = useCallback(() => setWelcomeVisible(false), [])
+
+  return <div className="portfolio-page"><AnimatePresence initial={false}>{welcomeVisible && <WelcomeOverlay onDismiss={dismissWelcome} />}</AnimatePresence><span className="margin-letter margin-letter--one" aria-hidden="true">G</span><span className="margin-letter margin-letter--two" aria-hidden="true">R</span><span className="margin-slab" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><main id="main-content" className="portfolio-column" aria-hidden={welcomeVisible}><Hero /><WorkSection /><AboutSection /><SkillsSection /><JourneySection /><GitHubActivitySection /><ContactSection /></main></div>
 }
