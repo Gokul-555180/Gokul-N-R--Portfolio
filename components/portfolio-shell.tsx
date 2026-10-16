@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, GitFork, Mail, Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { journey, projects, site, skillGroups } from '@/data/portfolio'
@@ -27,6 +27,7 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
 function Navigation() {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState('home')
+  const reduced = useReducedMotion()
   useEffect(() => {
     const sections = navigation.map(([id]) => document.getElementById(id)).filter((section): section is HTMLElement => Boolean(section))
     const observer = new IntersectionObserver((entries) => {
@@ -42,10 +43,12 @@ function Navigation() {
       {navigation.map(([id, label], index) => <a key={id} href={`#${id}`} className={active === id ? 'is-active' : undefined} aria-current={active === id ? 'page' : undefined}><small>{String(index + 1).padStart(2, '0')}.</small> {label}</a>)}
     </nav>
     <span className="nav-note">CSE STUDENT <ArrowDownRight size={16} /></span>
-    <button className="menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation"><span className="menu-button__label">Menu</span>{open ? <X size={18} /> : <Menu size={19} />}</button>
-    {open && <nav id="mobile-navigation" className="mobile-nav" aria-label="Mobile navigation">
-      {navigation.map(([id, label]) => <a key={id} href={`#${id}`} onClick={() => setOpen(false)} aria-current={active === id ? 'page' : undefined}>{label}<ArrowDownRight size={17} /></a>)}
-    </nav>}
+    <button className="menu-button" onClick={() => setOpen((isOpen) => !isOpen)} aria-expanded={open} aria-controls="mobile-navigation"><span className="menu-button__label">{open ? 'Close' : 'Menu'}</span><AnimatePresence initial={false} mode="wait"><motion.span key={open ? 'close' : 'menu'} className="menu-button__icon" initial={reduced ? false : { opacity: 0, rotate: -45, scale: .72 }} animate={reduced ? undefined : { opacity: 1, rotate: 0, scale: 1 }} exit={reduced ? undefined : { opacity: 0, rotate: 45, scale: .72 }} transition={{ duration: .16, ease: [0.22, 1, 0.36, 1] }}>{open ? <X size={18} /> : <Menu size={19} />}</motion.span></AnimatePresence></button>
+    <AnimatePresence initial={false}>
+      {open && <motion.nav id="mobile-navigation" className="mobile-nav" aria-label="Mobile navigation" initial={reduced ? false : { opacity: 0, y: -10, clipPath: 'inset(0 0 100% 0)' }} animate={reduced ? undefined : { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }} exit={reduced ? undefined : { opacity: 0, y: -8, clipPath: 'inset(0 0 100% 0)' }} transition={{ duration: .26, ease: [0.22, 1, 0.36, 1] }}>
+        {navigation.map(([id, label], index) => <motion.a key={id} href={`#${id}`} onClick={() => setOpen(false)} aria-current={active === id ? 'page' : undefined} initial={reduced ? false : { opacity: 0, x: -7 }} animate={reduced ? undefined : { opacity: 1, x: 0 }} transition={{ duration: .22, delay: reduced ? 0 : .035 + index * .025, ease: [0.22, 1, 0.36, 1] }}>{label}<ArrowDownRight size={17} /></motion.a>)}
+      </motion.nav>}
+    </AnimatePresence>
   </header>
 }
 
