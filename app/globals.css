@@ -38,25 +38,6 @@ button { cursor: pointer; }
 .skip-link:focus { top: 20px; }
 .eyebrow { margin: 0; color: var(--blue); font: 600 10px/1.3 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
 
-/* A brief, illustrated hello before the portfolio appears. */
-.welcome-overlay { position: fixed; z-index: 120; inset: 0; display: grid; place-items: center; padding: clamp(12px, 3vw, 40px); overflow: hidden; background-color: var(--blue); background-image: radial-gradient(rgba(255,255,255,.2) .55px, transparent .65px), linear-gradient(125deg, rgba(7,47,99,.42), transparent 48%, rgba(245,235,221,.12)); background-size: 5px 5px, auto; }
-.welcome-greeting { position: relative; display: grid; place-items: center; width: min(540px, 100%); aspect-ratio: 1.04; overflow: hidden; color: var(--ink); background: var(--ivory); border: 1px solid var(--ink); box-shadow: 10px 12px 0 rgba(6,35,75,.34); }
-.welcome-greeting::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .42; background-image: radial-gradient(rgba(26,22,16,.23) .45px, transparent .65px); background-size: 5px 5px; mix-blend-mode: multiply; }
-.welcome-greeting::after { content: ''; position: absolute; z-index: 0; right: -20%; bottom: -28%; width: 83%; aspect-ratio: 1; background: var(--blue); clip-path: polygon(46% 0, 100% 25%, 100% 100%, 0 100%, 0 39%); }
-.welcome-greeting > * { position: relative; z-index: 1; }
-.welcome-wordmark { position: absolute; top: 18px; left: 20px; display: inline-flex; align-items: center; gap: 7px; color: var(--ink); font: 700 10px var(--sans); letter-spacing: -.03em; }
-.welcome-wordmark i { width: 9px; height: 9px; background: var(--blue); border-radius: 50%; }
-.welcome-hello { position: absolute; z-index: 3; top: 12%; right: 13%; margin: 0; color: var(--blue); font: 700 clamp(4.1rem, 12vw, 6rem)/.82 var(--serif); letter-spacing: -.08em; transform: rotate(-5deg); }
-.beagle-doodle { width: min(84%, 420px); margin-top: 42px; filter: drop-shadow(9px 10px 0 rgba(23,23,23,.12)); animation: beagle-bob 1.25s ease-in-out 2; }
-.beagle-paw { transform-box: fill-box; transform-origin: 80% 92%; animation: beagle-wave .42s ease-in-out 5; }
-.welcome-note { position: absolute; bottom: 15%; left: 10%; color: var(--ink); font: 600 8px/1.45 var(--mono); letter-spacing: .09em; }
-.welcome-skip { position: absolute; right: 18px; bottom: 17px; display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 7px 0 7px 9px; color: var(--ivory); background: transparent; border: 0; border-bottom: 1px solid var(--ivory); font: 600 9px var(--mono); letter-spacing: .04em; transition: gap .2s var(--ease-editorial), color .2s var(--ease-editorial); }
-.welcome-skip:hover { gap: 10px; color: var(--cream); }.welcome-skip:focus-visible { outline-color: var(--ivory); }
-.welcome-progress { position: absolute; z-index: 3; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(16,59,112,.12); border-top: 1px solid var(--line); }.welcome-progress i { display: block; width: 0; height: 100%; background: var(--blue); animation: welcome-progress 2.4s linear forwards; }
-@keyframes welcome-progress { to { width: 100%; } }
-@keyframes beagle-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px) rotate(-.4deg); } }
-@keyframes beagle-wave { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-20deg); } }
-
 .portfolio-page { position: relative; min-height: 100vh; padding: 16px 0 28px; overflow: hidden; background-color: var(--blue); background-image: radial-gradient(rgba(255,255,255,.18) .55px, transparent .65px), linear-gradient(110deg, rgba(7,47,99,.3), transparent 38%, rgba(6,35,75,.14)); background-size: 5px 5px, auto; isolation: isolate; }
 .portfolio-column { position: relative; z-index: 1; width: min(1320px, calc(100% - 48px)); margin: 0 auto; }
 .panel { position: relative; overflow: hidden; background: var(--ivory); border: 1px solid rgba(23,23,23,.55); box-shadow: 0 2px 0 rgba(255,255,255,.28) inset; }
@@ -315,14 +296,6 @@ button { cursor: pointer; }
 .github-languages { align-self: start; padding-left: clamp(20px, 3vw, 40px); border-left: 1px solid var(--line); }.github-language-bar { display: flex; height: 12px; margin: 17px 0 17px; overflow: hidden; background: #d7ccbb; }.github-language-bar i { display: block; height: 100%; }.github-language-bar__1 { background: var(--blue-deep); }.github-language-bar__2 { background: #3d79b9; }.github-language-bar__3 { background: #8aaec7; }.github-language-bar__4 { background: #bd8741; }.github-language-bar__5 { background: #726a60; }.github-language-list { display: grid; gap: 8px; }.github-language-list span { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 7px; border-bottom: 1px solid var(--line); }.github-language-list b { font: 600 11px var(--mono); }.github-language-list small { color: var(--muted); font: 500 8px var(--mono); text-transform: uppercase; }.github-languages__note { margin: 17px 0 0; color: var(--muted); font: 500 8px/1.55 var(--mono); }.github-status { display: grid; gap: 15px; min-height: 190px; align-content: center; padding: 25px 0; color: var(--muted); border-bottom: 1px solid var(--line); }.github-status p { margin: 0; font: 500 12px/1.55 var(--mono); }
 
 @media (max-width: 760px) {
-  .welcome-overlay { padding: 17px; }
-  .welcome-greeting { width: min(100%, 390px); aspect-ratio: .92; box-shadow: 7px 8px 0 rgba(6,35,75,.3); }
-  .welcome-wordmark { top: 15px; left: 15px; font-size: 9px; }
-  .welcome-hello { top: 11%; right: 12%; font-size: clamp(3.7rem, 17vw, 5rem); }
-  .beagle-doodle { width: min(90%, 330px); margin-top: 35px; }
-  .welcome-note { bottom: 14%; left: 9%; font-size: 7px; }
-  .welcome-skip { right: 14px; bottom: 15px; font-size: 8px; }
-
   /* Mobile hero: keep navigation above the cover typography and give the display face room for its descenders. */
   .editorial-nav { z-index: 30; isolation: isolate; }
   .menu-button { position: relative; z-index: 2; min-width: 58px; justify-content: flex-end; transition: color .2s var(--ease-editorial), transform .2s var(--ease-editorial), background .2s var(--ease-editorial); }

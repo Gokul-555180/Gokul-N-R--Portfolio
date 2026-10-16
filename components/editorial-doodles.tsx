@@ -45,20 +45,3 @@ export function DoodleConnection({ className = '' }: DoodleProps) {
     <circle cx="145" cy="106" r="4" />
   </svg>
 }
-
-export function DoodleBeagle({ className = '' }: DoodleProps) {
-  return <svg className={`beagle-doodle ${className}`} viewBox="0 0 360 330" aria-hidden="true">
-    <path d="M55 250c18-31 57-44 105-41 41 3 73 21 111 16 25-3 48-17 62-5 17 15 5 48-21 52H98c-31 0-57-2-61-22-1-8 5-17 18-20Z" fill="#f5ebdd" stroke="#171717" strokeWidth="3" strokeLinejoin="round" />
-    <path d="M159 110c35-31 93-19 111 18 13 27 1 68-28 78-27 10-62-4-83-17-31-19-28-56 0-79Z" fill="#f5ebdd" stroke="#171717" strokeWidth="3" strokeLinejoin="round" />
-    <path d="M151 115c-2-30 17-55 40-54 20 1 32 22 25 42-6 18-25 33-48 39Z" fill="#171717" stroke="#171717" strokeWidth="3" strokeLinejoin="round" />
-    <ellipse cx="236" cy="142" rx="4" ry="5" fill="#171717" />
-    <ellipse cx="275" cy="165" rx="6" ry="5" fill="#171717" />
-    <path d="M208 177c16 7 35 9 52 3" fill="none" stroke="#171717" strokeWidth="3" strokeLinecap="round" />
-    <path d="M175 198c24 13 50 18 79 14" fill="none" stroke="#1454a4" strokeWidth="8" strokeLinecap="round" />
-    <circle cx="213" cy="207" r="7" fill="#d7b56e" stroke="#171717" strokeWidth="2" />
-    <g className="beagle-paw"><path d="M184 192c-20-44-28-87-6-106 10-9 24-3 25 10 1 25-4 49 10 78l12 26c5 12-23 16-31-8Z" fill="#f5ebdd" stroke="#171717" strokeWidth="3" strokeLinejoin="round" /><path d="M180 95c-13-8-20-2-25 9M190 83c-7-13-18-14-27-7" fill="none" stroke="#171717" strokeWidth="3" strokeLinecap="round" /></g>
-    <path d="M67 273h235" stroke="#171717" strokeWidth="3" strokeLinecap="round" />
-    <path d="M80 284h126M228 284h68" stroke="#1454a4" strokeWidth="3" strokeLinecap="round" opacity=".76" />
-    <path d="M294 58c7-10 16-10 22 0M309 37c7-10 16-10 22 0" fill="none" stroke="#d7b56e" strokeWidth="3" strokeLinecap="round" />
-  </svg>
-}
