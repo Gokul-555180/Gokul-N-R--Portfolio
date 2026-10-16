@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, GitFork, Mail, Menu, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { journey, projects, site, skillGroups } from '@/data/portfolio'
+import { BootIntro } from '@/components/boot-intro'
 import { DoodleArrow, DoodleCircle, DoodleConnection, DoodleRectangle, DoodleSpark, DoodleUnderline } from '@/components/editorial-doodles'
 import { GitHubActivitySection } from '@/components/github-activity-section'
 import { ProjectArt } from '@/components/project-art'
@@ -142,5 +143,24 @@ function ContactSection() {
 }
 
 export function PortfolioShell() {
-  return <div className="portfolio-page"><span className="margin-letter margin-letter--one" aria-hidden="true">G</span><span className="margin-letter margin-letter--two" aria-hidden="true">R</span><span className="margin-slab" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><main id="main-content" className="portfolio-column"><Hero /><WorkSection /><AboutSection /><SkillsSection /><JourneySection /><GitHubActivitySection /><ContactSection /></main></div>
+  const [showBoot, setShowBoot] = useState(true)
+
+  useEffect(() => {
+    try {
+      if (window.sessionStorage.getItem('gokul-boot-intro') === 'complete') setShowBoot(false)
+    } catch {
+      // Session storage can be unavailable; in that case, use the normal intro sequence.
+    }
+  }, [])
+
+  const completeBoot = useCallback(() => {
+    try {
+      window.sessionStorage.setItem('gokul-boot-intro', 'complete')
+    } catch {
+      // Storage can be unavailable in private browsing; the portfolio remains usable either way.
+    }
+    setShowBoot(false)
+  }, [])
+
+  return <div className="portfolio-page"><AnimatePresence initial={false}>{showBoot && <BootIntro onComplete={completeBoot} />}</AnimatePresence><span className="margin-letter margin-letter--one" aria-hidden="true">G</span><span className="margin-letter margin-letter--two" aria-hidden="true">R</span><span className="margin-slab" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><main id="main-content" className="portfolio-column"><Hero /><WorkSection /><AboutSection /><SkillsSection /><JourneySection /><GitHubActivitySection /><ContactSection /></main></div>
 }
