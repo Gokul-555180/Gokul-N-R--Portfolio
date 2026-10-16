@@ -30,7 +30,7 @@ export function DoodleCircle({ className = '' }: DoodleProps) {
 }
 
 export function DoodleRectangle({ className = '' }: DoodleProps) {
-  return <svg className={`doodle doodle-rectangle ${className}`} viewBox="0 0 122 74" fill="none" aria-hidden="true">
+  return <svg className={`doodle doodle-rectangle ${className}`} viewBox="0 0 122 74" preserveAspectRatio="none" fill="none" aria-hidden="true">
     <path d="M9 12c26-5 71-7 103 1 4 17 2 35-1 49-32 7-70 5-104-1-3-16-2-34 2-49Z" />
     <path d="M13 16c27-4 67-6 95 0" opacity=".4" />
   </svg>
